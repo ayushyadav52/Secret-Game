@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Romantic Dare Game</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: #000;
+      color: #fff;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      text-align: center;
+      font-size: 20px;
+    }
+
+    .container {
+      background: rgba(255, 255, 255, 0.05);
+      padding: 30px;
+      border-radius: 20px;
+      box-shadow: 0 8px 20px rgba(255, 255, 255, 0.2);
+      max-width: 600px;
+      width: 90%;
+    }
+
+    button {
+      background: #fff;
+      color: #000;
+      border: none;
+      padding: 18px 36px;
+      border-radius: 30px;
+      font-size: 20px;
+      cursor: pointer;
+      margin-top: 20px;
+      transition: all 0.3s ease;
+    }
+
+    button:hover {
+      background: #444;
+      color: #fff;
+    }
+
+    .loading {
+      border: 8px solid rgba(255, 255, 255, 0.3);
+      border-top: 8px solid #fff;
+      border-radius: 50%;
+      width: 70px;
+      height: 70px;
+      animation: spin 2s linear infinite;
+      margin: 20px auto;
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Romantic Dare Game</h1>
+    <div id="dareText">शुरू करने के लिए Start बटन दबाएं।</div>
+    <div id="loading" class="loading" style="display: none;"></div>
+    <button id="startBtn">Start Game</button>
+    <button id="nextBtn" style="display: none;">Next Dare</button>
+  </div>
+
+  <script>
+    const dares = [
+      "आंखों में आंखें डालकर क्लाइमेक्स तक पहुंचने की कोशिश करो।",
+      "एक-दूसरे को बोलकर बताओ कि किस जगह टच अच्छा लग रहा है।",
+      "पार्टनर से बोलो कि वो आज तुम्हें पूरी तरह कंट्रोल करें।",
+      "पोज़ीशन बदलो जब तक दोनों संतुष्ट न हों।",
+      "सिर्फ whispers में बात करो, कोई ऊँची आवाज़ नहीं।",
+      "बिना बोले एक-दूसरे को express करो।",
+      "mirror के सामने सेक्स ट्राय करो।",
+      "आज सिर्फ slow and teasing movement करो।",
+      "climax रोकने की कोशिश करो और बार-बार tease करो।",
+      "पार्टनर की नज़रों से नज़रें मत हटाओ पूरा टाइम।",
+      "खुद को पूरी तरह छोड़ दो और बस महसूस करो।",
+      "roleplay शुरू करो जैसे पहली बार हो।",
+      "पार्टनर से कहो वो तुम्हें eyes closed टच करें।",
+      "जो भी बोले, बस उसकी मानो — उसकी fantasy पूरी करो।",
+      "अपने नाम से नहीं, pet name से पुकारो।",
+      "eyes closed करके पार्टनर को body explore करने दो।",
+      "एक daring position ट्राय करो जो पहले नहीं किया।",
+      "***** के बाद भी कुछ देर hold में रहो।",
+      "1 मिनट के लिए कुछ बोलना मना — बस आंखों से कहो।",
+      "climax के समय पार्टनर को जोर से पकड़ो और चूमो।",
+      "pillow के नीचे हाथ रखो और जरा wild बनो।",
+      "कुछ सेकंड तक सिर्फ foreplay करो, entry delay करो।",
+      "एक loving slap ट्राय करो (अगर comfortable हो)।",
+      "noise को रोकने की कोशिश करते हुए प्यार करो।",
+      "silent sex challenge — जो बोले, वो हार गया!",
+      "अपनी सबसे deep fantasy softly बोलो।",
+      "climax के समय एक line बोलो — जो दिल से निकले।",
+      "sex के बीच में compliment दो: “तुम आज irresistible लग रही हो।”",
+      "एक ***** secret slow motion में कान में बोलो।",
+      "body oil इस्तेमाल करके massage से शुरुआत करो।",
+      "सिर्फ oral देकर पार्टनर को tease करो।",
+      "हाथ पकड़कर अपने पास खींचो — बिना पूछे।",
+      "climax के बाद भी kissing मत रोको।",
+      "खुद को उनके ऊपर रखो और बस महसूस करो।",
+      "एक पोज़ीशन में जितना हो सके रुको, फिर तेजी से बदलो।",
+      "धीरे-धीरे बोलो: “तुम मेरे हो/हो।”",
+      "climax के पहले pause करो — और फिर teasing से दोबारा शुरू करो।",
+      "एक-दूसरे को mirrors में देखो और पोज़ change करो।",
+      "सिर्फ slow strokes के साथ आखों में देखो और 'I love you' बोलो।",
+      "sex के बीच में “क्या पसंद है” पूछो।",
+      "दोनों साथ ***** का try करो — challenge mode।",
+      "खुद को पूरी तरह soft करो, और पार्टनर को wild बनने दो।",
+      "सिर्फ neck और ears को kiss करते रहो जब तक वो control न खो दे।",
+      "“मेरी fantasy बनो” कहकर अपने रूल्स बताओ।",
+      "climax के बाद दोनों कुछ समय बिना बोले cuddle करो।",
+      "eye contact बनाए रखो जब climax आए।",
+      "kiss करते हुए नाम repeat करो।",
+      "उनकी आंखों में देखकर बोलो “तुम मेरे सब कुछ हो”।",
+      "“तुम आज बहुत सेक्सी लग रही हो” कहकर धीरे से गाल चूमो।",
+      "बिस्तर पर लेटे हुए धीरे-धीरे उन्हें छूते रहो।",
+      "उनका हाथ पकड़कर अपनी छाती पर रखो और कुछ कहो।",
+      "आंखों में देखो और सिर्फ इशारों से बात करो।",
+      "धीरे से उनकी उंगलियाँ चूसो (playfully)।",
+      "बिस्तर पर बैठाकर उनकी पीठ का मसाज करो।",
+      "उनके बालों में उंगलियां चलाओ और गर्दन चूमो।",
+      "अपनी उंगलियाँ उनके गले पर फिराओ और प्यार से बोलो।",
+      "उनके हाथ पकड़ कर बिस्तर पर खींच लो और किस करो।"
+    ];
+
+    let usedDares = new Set();
+    const dareText = document.getElementById("dareText");
+    const startBtn = document.getElementById("startBtn");
+    const nextBtn = document.getElementById("nextBtn");
+    const loading = document.getElementById("loading");
+
+    function showLoading(callback) {
+      loading.style.display = 'block';
+      dareText.textContent = '';
+      setTimeout(() => {
+        loading.style.display = 'none';
+        callback();
+      }, 3000);
+    }
+
+    function getRandomDare() {
+      if (usedDares.size === dares.length) {
+        dareText.textContent = "सभी डेयर्स हो चुके हैं! फिर से शुरू करने के लिए पेज रिफ्रेश करें।";
+        nextBtn.style.display = "none";
+        return;
+      }
+
+      let dare;
+      do {
+        dare = dares[Math.floor(Math.random() * dares.length)];
+      } while (usedDares.has(dare));
+
+      usedDares.add(dare);
+      dareText.textContent = dare;
+    }
+
+    startBtn.onclick = () => {
+      startBtn.style.display = 'none';
+      nextBtn.style.display = 'inline-block';
+      showLoading(getRandomDare);
+    };
+
+    nextBtn.onclick = () => {
+      showLoading(getRandomDare);
+    };
+  </script>
+</body>
+</html>
